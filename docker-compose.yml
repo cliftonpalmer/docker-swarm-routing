@@ -9,7 +9,7 @@ services:
         volumes:
         - ./nginx.conf:/etc/nginx/nginx.conf
         environment:
-        - NGINX_HOST=purplebirdman.online
+        - NGINX_HOST=purplebirdman.com
         - NGINX_PORT=80
         ports:
         - 80:80
