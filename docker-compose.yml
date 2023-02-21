@@ -1,12 +1,14 @@
+# requires variable config loading, such as:
+# docker stack deploy -c <(docker-compose config) proxy
+#
+# also needs an .env file with some variables like:
+# LOCAL_STORAGE=/mnt/data2/purplebirdman/art
+# IPV4_WAN=public.purplebirdman.com
+
 version: '3'
-networks:
-    proxy:
-        external:
-            name: proxy
 services:
-    nginx:
+    proxy:
         image: nginx:1.17
-        restart: on-failure
         deploy:
             restart_policy:
                 condition: on-failure
@@ -14,12 +16,44 @@ services:
                 max_attempts: 5
                 window: 10s
         volumes:
-        - ./nginx.conf:/etc/nginx/nginx.conf
+        - ./proxy/nginx.conf:/etc/nginx/nginx.conf
         environment:
         - NGINX_HOST=purplebirdman.com
         - NGINX_PORT=80
         ports:
         - 80:80
         - 443:443
-        networks:
-        - proxy
+    kanboard:
+        image: kanboard/kanboard:v1.2.26
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 5
+                window: 10s
+        volumes:
+        - kanboard_data:/var/www/app/data
+        - kanboard_plugins:/var/www/app/plugins
+        - kanboard_ssl:/etc/nginx/ssl
+    public:
+        image: cliftonpalmer/public:1.0.0
+        volumes:
+        - ${LOCAL_STORAGE}:/storage
+        - public_data:/usr/local/apache2/htdocs
+        environment:
+        - PUBLIC_ROOT_DIR=/storage
+        - PUBLIC_LINK_DIR=/usr/local/apache2/htdocs
+        - PUBLIC_HTTP_URI=http://${IPV4_WAN}
+volumes:
+    kanboard_data:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: /mnt/kanboard_data
+    kanboard_plugins:
+        driver: local
+    kanboard_ssl:
+        driver: local
+    public_data:
+        driver: local
