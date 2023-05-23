@@ -57,3 +57,7 @@ volumes:
         driver: local
     public_data:
         driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: /mnt/public_data
