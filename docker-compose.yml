@@ -17,11 +17,11 @@ services:
                 window: 10s
         volumes:
         - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+        - /etc/ssl/certs/purplebirdman/:/etc/ssl/certs/
         environment:
         - NGINX_HOST=purplebirdman.com
-        - NGINX_PORT=80
+        - NGINX_PORT=443
         ports:
-        - 80:80
         - 443:443
     kanboard:
         image: kanboard/kanboard:v1.2.26
