@@ -9,12 +9,6 @@ version: '3'
 services:
     proxy:
         image: nginx:1.17
-        deploy:
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 5
-                window: 10s
         volumes:
         - ./proxy/nginx.conf:/etc/nginx/nginx.conf
         - /etc/ssl/certs/purplebirdman/:/etc/ssl/certs/
@@ -25,12 +19,6 @@ services:
         - 443:443
     kanboard:
         image: kanboard/kanboard:v1.2.26
-        deploy:
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 5
-                window: 10s
         volumes:
         - kanboard_data:/var/www/app/data
         - kanboard_plugins:/var/www/app/plugins
