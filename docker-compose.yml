@@ -18,8 +18,11 @@ services:
         ports:
         - 443:443
         depends_on:
+        - purplebirdman
         - kanboard
         - public
+    purplebirdman:
+        image: cjpalmer/purplebirdman:1.0.0
     kanboard:
         image: kanboard/kanboard:v1.2.26
         volumes:
