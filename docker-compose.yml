@@ -30,7 +30,7 @@ services:
         - kanboard_plugins:/var/www/app/plugins
         - kanboard_ssl:/etc/nginx/ssl
     public:
-        image: cliftonpalmer/public:1.0.0
+        image: cjpalmer/public:1.1.0
         volumes:
         - ${LOCAL_STORAGE}:/storage
         - public_data:/usr/local/apache2/htdocs
