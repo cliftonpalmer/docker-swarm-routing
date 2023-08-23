@@ -1,9 +1,7 @@
 # requires variable config loading, such as:
-# docker stack deploy -c <(docker-compose config) proxy
+# docker stack deploy -c <(docker-compose config) purplebirdman
 #
-# also needs an .env file with some variables like:
-# LOCAL_STORAGE=/mnt/data2/purplebirdman/art
-# IPV4_WAN=public.purplebirdman.com
+# also needs an .env file with some variables!
 
 version: '3'
 services:
@@ -30,14 +28,14 @@ services:
         - kanboard_plugins:/var/www/app/plugins
         - kanboard_ssl:/etc/nginx/ssl
     public:
-        image: cjpalmer/public:1.1.0
+        image: cjpalmer/public:1.2.0
         volumes:
-        - ${LOCAL_STORAGE}:/storage
+        - ${SHARE_ROOT}:/storage
         - public_data:/usr/local/apache2/htdocs
+        - httpd_users:/usr/local/apache2/auth
         environment:
         - PUBLIC_ROOT_DIR=/storage
         - PUBLIC_LINK_DIR=/usr/local/apache2/htdocs
-        - PUBLIC_HTTP_URI=https://${IPV4_WAN}
 volumes:
     kanboard_data:
         driver: local
@@ -55,3 +53,5 @@ volumes:
             o: bind
             type: none
             device: /mnt/public_data
+    httpd_users:
+        driver: local
