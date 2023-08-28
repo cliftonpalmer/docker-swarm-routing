@@ -28,7 +28,7 @@ services:
         - kanboard_plugins:/var/www/app/plugins
         - kanboard_ssl:/etc/nginx/ssl
     public:
-        image: cjpalmer/public:1.2.0
+        image: cjpalmer/public:1.2.1
         volumes:
         - ${SHARE_ROOT}:/storage
         - public_data:/usr/local/apache2/htdocs
@@ -36,6 +36,7 @@ services:
         environment:
         - PUBLIC_ROOT_DIR=/storage
         - PUBLIC_LINK_DIR=/usr/local/apache2/htdocs
+        - PUBLIC_FQDN_OVERRIDE=https://public.purplebirdman.com
 volumes:
     kanboard_data:
         driver: local
