@@ -4,6 +4,9 @@
 # also needs an .env file with some variables!
 
 version: '3'
+networks:
+    go-backend:
+        driver: overlay
 services:
     proxy:
         image: nginx:1.17
@@ -19,6 +22,7 @@ services:
         - purplebirdman
         - kanboard
         - public
+        - go-web
     purplebirdman:
         image: cjpalmer/purplebirdman:1.0.0
     kanboard:
@@ -37,6 +41,28 @@ services:
         - PUBLIC_ROOT_DIR=/storage
         - PUBLIC_LINK_DIR=/usr/local/apache2/htdocs
         - PUBLIC_FQDN_OVERRIDE=https://public.purplebirdman.com
+    db:
+        image: mariadb:10.6
+        environment:
+            MARIADB_ROOT_PASSWORD: admin
+            MARIADB_DATABASE: go
+            MARIADB_USER: socket
+            MARIADB_PASSWORD: socketpw
+        networks:
+        - go-backend
+    socket:
+        image: cjpalmer/go-socket:1.0.0
+        networks:
+        - go-backend
+        depends_on:
+        - db
+    go-web:
+        image: cjpalmer/go-web:1.0.0
+        networks:
+        - default
+        - go-backend
+        depends_on:
+        - socket
 volumes:
     kanboard_data:
         driver: local
