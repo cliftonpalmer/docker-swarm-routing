@@ -32,7 +32,7 @@ services:
         - kanboard_plugins:/var/www/app/plugins
         - kanboard_ssl:/etc/nginx/ssl
     public:
-        image: cjpalmer/public:1.2.2
+        image: cjpalmer/public:1.2.3
         volumes:
         - ${SHARE_ROOT}:/storage
         - public_data:/usr/local/apache2/htdocs
