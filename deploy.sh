@@ -1,2 +1,2 @@
 #!/bin/bash
-docker stack deploy -c <(docker-compose config) purplebirdman
+docker stack deploy -c <(docker-compose config) proxy

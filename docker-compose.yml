@@ -1,84 +1,23 @@
 # requires variable config loading, such as:
-# docker stack deploy -c <(docker-compose config) purplebirdman
+# docker stack deploy -c <(docker-compose config) proxy
 #
 # also needs an .env file with some variables!
 
 version: '3'
 networks:
-    go-backend:
-        driver: overlay
-services:
     proxy:
+        external: true
+services:
+    web-proxy:
         image: nginx:1.17
         volumes:
-        - ./proxy/nginx.conf:/etc/nginx/nginx.conf
         - /etc/ssl/certs/purplebirdman/:/etc/ssl/certs/
+        - ./nginx.conf:/etc/nginx/nginx.conf
+        - ./conf.d/:/etc/nginx/conf.d/
         environment:
         - NGINX_HOST=purplebirdman.com
         - NGINX_PORT=443
         ports:
         - 443:443
-        depends_on:
-        - purplebirdman
-        - kanboard
-        - public
-        - go-web
-    purplebirdman:
-        image: cjpalmer/purplebirdman:1.0.0
-    kanboard:
-        image: kanboard/kanboard:v1.2.26
-        volumes:
-        - kanboard_data:/var/www/app/data
-        - kanboard_plugins:/var/www/app/plugins
-        - kanboard_ssl:/etc/nginx/ssl
-    public:
-        image: cjpalmer/public:1.2.3
-        volumes:
-        - ${SHARE_ROOT}:/storage
-        - public_data:/usr/local/apache2/htdocs
-        - httpd_users:/usr/local/apache2/auth
-        environment:
-        - PUBLIC_ROOT_DIR=/storage
-        - PUBLIC_LINK_DIR=/usr/local/apache2/htdocs
-        - PUBLIC_FQDN_OVERRIDE=https://public.purplebirdman.com
-    db:
-        image: mariadb:10.6
-        environment:
-            MARIADB_ROOT_PASSWORD: admin
-            MARIADB_DATABASE: go
-            MARIADB_USER: socket
-            MARIADB_PASSWORD: socketpw
         networks:
-        - go-backend
-    socket:
-        image: cjpalmer/go-socket:1.0.0
-        networks:
-        - go-backend
-        depends_on:
-        - db
-    go-web:
-        image: cjpalmer/go-web:1.0.0
-        networks:
-        - default
-        - go-backend
-        depends_on:
-        - socket
-volumes:
-    kanboard_data:
-        driver: local
-        driver_opts:
-            o: bind
-            type: none
-            device: /mnt/kanboard_data
-    kanboard_plugins:
-        driver: local
-    kanboard_ssl:
-        driver: local
-    public_data:
-        driver: local
-        driver_opts:
-            o: bind
-            type: none
-            device: /mnt/public_data
-    httpd_users:
-        driver: local
+        - proxy
