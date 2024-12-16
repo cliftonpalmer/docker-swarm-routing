@@ -1,18 +1,12 @@
-# requires variable config loading, such as:
-# docker stack deploy -c <(docker-compose config) proxy
-#
-# also needs an .env file with some variables!
-
 version: '3'
 networks:
     proxy:
         external: true
 services:
     web:
-        image: nginx:1.17
+        image: nginx:1.27-alpine
         volumes:
         - /etc/letsencrypt/:/etc/letsencrypt/
-        - ./nginx.conf:/etc/nginx/nginx.conf
         - ./conf.d/:/etc/nginx/conf.d/
         environment:
         - NGINX_HOST=purplebirdman.com
